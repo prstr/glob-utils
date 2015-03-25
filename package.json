@@ -1,0 +1,23 @@
+{
+  "name": "prostore.glob-utils",
+  "version": "0.0.0",
+  "description": "Glob Utilities",
+  "main": "index.js",
+  "dependencies": {
+    "glob": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:prstr/glob-utils.git"
+  },
+  "keywords": [
+    "prostore",
+    "utils"
+  ],
+  "author": "Boris Okunskiy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prstr/glob-utils/issues"
+  },
+  "homepage": "https://github.com/prstr/glob-utils"
+}
