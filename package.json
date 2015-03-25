@@ -4,7 +4,8 @@
   "description": "Glob Utilities",
   "main": "index.js",
   "dependencies": {
-    "glob": "*"
+    "glob": "*",
+    "async": "*"
   },
   "repository": {
     "type": "git",

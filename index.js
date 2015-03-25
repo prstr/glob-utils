@@ -1,22 +1,37 @@
 'use strict';
 
-var glob = require('glob');
+var glob = require('glob')
+  , async = require('async')
+  , fs = require('fs')
+  , path = require('path')
+  , crypto = require('crypto');
 
 module.exports = exports = function(cwd, pattern, cb) {
-  var files = [];
-  var g = new glob.Glob(pattern, {
-    cwd: cwd,
-    nodir: true,
-    stat: true
-  });
-  g.on('stat', function(file, stat) {
-    files.push({
-      path: file,
-      mtime: stat.mtime.getTime()
-    });
-  });
-  g.on('end', function() {
-    cb(null, files);
+  glob(pattern, { cwd: cwd, nodir: true }, function(err, files) {
+    /* istanbul ignore if */
+    if (err) return cb(err);
+    async.map(files, function(file, cb) {
+      var filename = path.resolve(cwd, file);
+      fs.stat(filename, function(err, stat) {
+        /* istanbul ignore if */
+        if (err) return cb(err);
+        var hash = crypto.createHash('md5')
+          , stream = fs.createReadStream(filename, 'utf-8');
+        stream.on('data', function(data) {
+          hash.update(data);
+        });
+        stream.on('error', function(err) {
+          cb(err);
+        });
+        stream.on('end', function() {
+          cb(null, {
+            path: file,
+            md5: hash.digest('hex'),
+            mtime: stat.mtime.getTime()
+          });
+        });
+      });
+    }, cb);
   });
 };
 
@@ -33,7 +48,7 @@ exports.diff = function(src, dst) {
       added.push(srcFile);
       return;
     }
-    if (srcFile.mtime < dstFile.mtime)
+    if (srcFile.md5 && srcFile.md5 == dstFile.md5)
       unmodified.push(dstFile);
     else
       modified.push(dstFile);
