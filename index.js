@@ -2,7 +2,7 @@
 
 var glob = require('glob');
 
-module.exports = function(cwd, pattern, cb) {
+module.exports = exports = function(cwd, pattern, cb) {
   var files = [];
   var g = new glob.Glob(pattern, {
     cwd: cwd,
@@ -11,7 +11,7 @@ module.exports = function(cwd, pattern, cb) {
   });
   g.on('stat', function(file, stat) {
     files.push({
-      file: file,
+      path: file,
       mtime: stat.mtime.getTime()
     });
   });
@@ -19,3 +19,37 @@ module.exports = function(cwd, pattern, cb) {
     cb(null, files);
   });
 };
+
+exports.diff = function(src, dst) {
+  var added = []
+    , modified = []
+    , unmodified = []
+    , _dst = dst.slice();
+  src.forEach(function(srcFile) {
+    var dstFile = findAndRemove(_dst, function(dstFile) {
+      return dstFile.path == srcFile.path;
+    });
+    if (!dstFile) {
+      added.push(srcFile);
+      return;
+    }
+    if (srcFile.mtime < dstFile.mtime)
+      unmodified.push(dstFile);
+    else
+      modified.push(dstFile);
+  });
+  return {
+    added: added,
+    removed: _dst,
+    modified: modified,
+    unmodified: unmodified
+  };
+};
+
+function findAndRemove(arr, fn, thisArg) {
+  for (var i = 0; i < arr.length; i++) {
+    var elem = arr[i];
+    if (fn.call(thisArg, elem, i, arr))
+      return arr.splice(i, 1)[0];
+  }
+}
