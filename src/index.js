@@ -24,9 +24,6 @@ var glob = require('glob')
  * // diff.modified
  * // diff.unmodified
  * ```
- *
- * @module prostore.glob-utils
- * @see {GlobFile}
  */
 
 /**
@@ -38,10 +35,12 @@ var glob = require('glob')
  * @param cwd {string} - (current work directory) a directory where lookup is
  *   performed; this path is also stripped from resulting file paths.
  * @param pattern {string} - glob pattern
- * @param cb {lookupCb} - callback `function(err, files)`
+ * @param cb {function} - callback `function(err, files)`,
+ *   where `files` is an array of {@link GlobFile}
  * @see {@link https://github.com/isaacs/node-glob glob}
+ * @module prostore.glob-utils
  */
-module.exports = exports = function lookup(cwd, pattern, cb) {
+module.exports = exports = function(cwd, pattern, cb) {
   glob(pattern, { cwd: cwd, nodir: true }, function(err, files) {
     /* istanbul ignore if */
     if (err) return cb(err);
@@ -71,16 +70,10 @@ module.exports = exports = function lookup(cwd, pattern, cb) {
 };
 
 /**
- * @callback lookupCb
- * @param {*} err - error object
- * @param {GlobFile[]} files - array of file descriptors
- */
-
-/**
  * Compares two lists of file descriptors yielding four arrays:
  *
- *   * `added` — files existing in `src` but missing in `dst`;
- *   * `removed` — files existing in `dst` but missing in `src`;
+ *   * `added` — files existing in `src` but missing in `dst`
+ *   * `removed` — files existing in `dst` but missing in `src`
  *   * `modified` — files existing in both `src` and `dst` but with different `md5`
  *   * `unmodified` — files with equal content in both `src` and `dst`
  *
@@ -137,7 +130,7 @@ function findAndRemove(arr, fn, thisArg) {
  *
  * Example:
  *
- * ```
+ * ```js
  * {
  *   path: 'path/to/file/relative/to/cwd`,
  *   mtime: 1234567890,
@@ -146,7 +139,7 @@ function findAndRemove(arr, fn, thisArg) {
  * ```
  *
  * @typedef {object} GlobFile
- * @property {string} path -- path relative to `cwd`
- * @property {number} mtime -- last modification timestamp
- * @property {string} md5 -- md5 hash of file content
+ * @property {string} path - path relative to `cwd`
+ * @property {number} mtime - last modification timestamp
+ * @property {string} md5 - md5 hash of file content
  */
