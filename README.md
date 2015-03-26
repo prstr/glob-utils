@@ -1,27 +1,42 @@
-# ProStore Glob Utilities
+# Glob Utils
 
-Glob utils are used to lookup and compare file trees.
+Утилиты для работы со списками файлов по [glob](http://en.wikipedia.org/wiki/Glob_%28programming%29)-шаблонам.
 
-## Usage
+## Файловые дескрипторы
 
-List files in `base/directory`:
+Все методы оперируют файловыми дескрипторами в следующем формате: 
+
+```js
+{
+  path: 'path/to/file/relative/to/cwd',
+  mtime: 1234567890,
+  md5: 'd41d8cd98f00b204e9800998ecf8427e'
+}
+```
+
+Пути к файлам возвращаются относительно рабочей директории (параметр `cwd`).
+ 
+## Использование
 
 ```js
 var glob = require('prostore.glob-utils');
-
-glob('base/directory', 'glob/pattern/*', function(err, files) {
-  // [ { path: 'rel/path/file1', mtime: 123456, md5: 'efcd...' }, ...]
-});
 ```
+    
 
-Compare files:
+1. Поиск файлов в `base/directory`:
 
-```js
-var diff = glob.diff(oldFiles, newFiles);
-// diff.added
-// diff.removed
-// diff.modified
-// diff.unmodified
-```
+    ```js
+    glob('base/directory', '**/*', function(err, files) { 
+      // [ { path: 'rel/path/to/file1', mtime: 1234567890, md5: 'd41d8cd...' }, ... ] 
+    });
+    ```
 
-See source docs for more info.
+2. Сравнение списков файлов:
+
+    ```js
+    var diff = glob.diff(newFiles, oldFiles);
+    // diff.added — файлы, которые есть в `newFiles`, но отсутствуют в `oldFiles` 
+    // diff.removed — файлы, которые есть в `oldFiles`, но отсутствуют в `newFiles`
+    // diff.modified — файлы, хэши которых не совпадают
+    // diff.unmodified — одинаковые файлы
+    ```

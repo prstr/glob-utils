@@ -2,7 +2,7 @@
   "name": "prostore.glob-utils",
   "version": "0.0.5",
   "description": "Glob Utilities",
-  "main": "src/index.js",
+  "main": "index.js",
   "dependencies": {
     "glob": "*",
     "async": "*"
