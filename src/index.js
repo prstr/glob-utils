@@ -114,7 +114,7 @@ exports.diff = function(src, dst) {
  * @param {function(elem, index, array)} fn - predicate function
  * @param {*} thisArg - optional value for `this` in predicate function
  * @returns {*} element found or `null`
- * @api private
+ * @private
  */
 function findAndRemove(arr, fn, thisArg) {
   for (var i = 0; i < arr.length; i++) {

@@ -4,7 +4,6 @@
 
 * [prostore.glob-utils](#prostore.module_glob-utils)
   * [glob-utils.diff(src, dst)](#prostore.module_glob-utils.diff)
-  * [glob-utils~findAndRemove(arr, fn, thisArg)](#prostore.module_glob-utils..findAndRemove)
 
 **Typedefs**
 
@@ -35,12 +34,6 @@ Directories are not returned either.
 - cb `function` - callback `function(err, files)`,
   where `files` is an array of [GlobFile](#GlobFile)  
 
-**Members**
-
-* [prostore.glob-utils](#prostore.module_glob-utils)
-  * [glob-utils.diff(src, dst)](#prostore.module_glob-utils.diff)
-  * [glob-utils~findAndRemove(arr, fn, thisArg)](#prostore.module_glob-utils..findAndRemove)
-
 <a name="prostore.module_glob-utils.diff"></a>
 ##glob-utils.diff(src, dst)
 Compares two lists of file descriptors yielding four arrays:
@@ -65,19 +58,6 @@ var diff = glob.diff(oldFiles, newFiles);
 - src <code>[Array.&lt;GlobFile&gt;](#GlobFile)</code>  
 - dst <code>[Array.&lt;GlobFile&gt;](#GlobFile)</code>  
 
-<a name="prostore.module_glob-utils..findAndRemove"></a>
-##glob-utils~findAndRemove(arr, fn, thisArg)
-Search an array by applying predicate function to each element.
-If found, the element is removed from original array.
-
-**Params**
-
-- arr `Array` - array to search in  
-- fn `function` - predicate function  
-- thisArg `*` - optional value for `this` in predicate function  
-
-**Scope**: inner function of [glob-utils](#prostore.module_glob-utils)  
-**Returns**: `*` - element found or `null`  
 <a name="GlobFile"></a>
 #type: GlobFile
 File descriptor object.
