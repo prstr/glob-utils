@@ -7,7 +7,7 @@ var glob = require('glob')
   , crypto = require('crypto');
 
 /**
- * Glob utils used to read and compare file trees.
+ * Lookup files in `cwd` directory matching glob `pattern`.
  *
  * Usage:
  *
@@ -17,17 +17,7 @@ var glob = require('glob')
  * glob('base/directory', 'glob/pattern/*', function(err, files) {
  *   // ...
  * });
- *
- * var diff = glob.diff(oldFiles, newFiles);
- * // diff.added
- * // diff.removed
- * // diff.modified
- * // diff.unmodified
  * ```
- */
-
-/**
- * Lookup files in `cwd` directory matching glob `pattern`.
  *
  * Dot-files (i.e. starting with dot) are not returned as per `glob` module.
  * Directories are not returned either.
@@ -77,9 +67,18 @@ module.exports = exports = function(cwd, pattern, cb) {
  *   * `modified` — files existing in both `src` and `dst` but with different `md5`
  *   * `unmodified` — files with equal content in both `src` and `dst`
  *
+ * Usage:
+ *
+ * ```
+ * var diff = glob.diff(oldFiles, newFiles);
+ * // diff.added
+ * // diff.removed
+ * // diff.modified
+ * // diff.unmodified
+ * ```
+ *
  * @param {GlobFile[]} src
  * @param {GlobFile[]} dst
- * @returns {{added: GlobFile[], removed: GlobFile[], modified: GlobFile[], unmodified: GlobFile[]}}
  */
 exports.diff = function(src, dst) {
   var added = []
@@ -132,7 +131,7 @@ function findAndRemove(arr, fn, thisArg) {
  *
  * ```js
  * {
- *   path: 'path/to/file/relative/to/cwd`,
+ *   path: 'path/to/file/relative/to/cwd',
  *   mtime: 1234567890,
  *   md5: 'd41d8cd98f00b204e9800998ecf8427e'
  * }
