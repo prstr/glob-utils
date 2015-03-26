@@ -1,6 +1,6 @@
 {
   "name": "prostore.glob-utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Glob Utilities",
   "main": "src/index.js",
   "dependencies": {
