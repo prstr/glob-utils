@@ -9,16 +9,6 @@ var glob = require('glob')
 /**
  * Lookup files in `cwd` directory matching glob `pattern`.
  *
- * Usage:
- *
- * ```js
- * var glob = require('prostore.glob-utils');
- *
- * glob('base/directory', 'glob/pattern/*', function(err, files) {
- *   // ...
- * });
- * ```
- *
  * Dot-files (i.e. starting with dot) are not returned as per `glob` module.
  * Directories are not returned either.
  *
@@ -66,16 +56,6 @@ module.exports = exports = function(cwd, pattern, cb) {
  *   * `removed` — files existing in `dst` but missing in `src`
  *   * `modified` — files existing in both `src` and `dst` but with different `md5`
  *   * `unmodified` — files with equal content in both `src` and `dst`
- *
- * Usage:
- *
- * ```js
- * var diff = glob.diff(oldFiles, newFiles);
- * // diff.added
- * // diff.removed
- * // diff.modified
- * // diff.unmodified
- * ```
  *
  * @param {GlobFile[]} src
  * @param {GlobFile[]} dst
