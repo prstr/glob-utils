@@ -9,8 +9,7 @@
   },
   "devDependencies": {
     "gulp": "*",
-    "gulp-rename": "*",
-    "gulp-jsdoc-to-markdown": "*"
+    "jsdoc-to-markdown": "*"
   },
   "repository": {
     "type": "git",

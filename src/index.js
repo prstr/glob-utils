@@ -7,32 +7,35 @@ var glob = require('glob')
   , crypto = require('crypto');
 
 /**
- * Each file descriptor looks like this:
+ * Glob utils are used to read and compare file trees.
  *
- * ```
- * {
- *   path: 'path/to/file/relative/to/cwd`,
- *   mtime: 1234567890,
- *   md5: 'd41d8cd98f00b204e9800998ecf8427e'
- * }
+ * Usage:
+ *
+ * ```js
+ * var glob = require('prostore.glob-utils');
+ *
+ * glob('base/directory', 'glob/pattern/*', function(err, files) {
+ *   // ...
+ * });
  * ```
  *
- * @typedef {{ path: string, mtime: number, md5: string }} globFile
+ * @module
+ * @see {GlobFile}
  */
 
 /**
- * Expands glob `pattern` into an array of file descriptors.
+ * Lookup files in `cwd` directory matching glob `pattern`.
  *
  * Dot-files (i.e. starting with dot) are not returned as per `glob` module.
+ * Directories are not returned either.
  *
- * @param cwd {string} (current work directory) a directory where lookup is
+ * @param cwd {string} - (current work directory) a directory where lookup is
  *   performed; this path is also stripped from resulting file paths.
- * @param pattern {string} glob pattern
- * @param cb {function(err, globFile[])} callback
+ * @param pattern {string} - glob pattern
+ * @param cb {lookupCb} - callback `function(err, files)`
  * @see {@link https://github.com/isaacs/node-glob glob}
- * @module
  */
-module.exports = exports = function(cwd, pattern, cb) {
+module.exports = exports = function lookup(cwd, pattern, cb) {
   glob(pattern, { cwd: cwd, nodir: true }, function(err, files) {
     /* istanbul ignore if */
     if (err) return cb(err);
@@ -62,6 +65,12 @@ module.exports = exports = function(cwd, pattern, cb) {
 };
 
 /**
+ * @callback lookupCb
+ * @param {*} err - error object
+ * @param {GlobFile[]} files - array of file descriptors
+ */
+
+/**
  * Compares two lists of file descriptors yielding four arrays:
  *
  *   * `added` — files existing in `src` but missing in `dst`;
@@ -69,9 +78,9 @@ module.exports = exports = function(cwd, pattern, cb) {
  *   * `modified` — files existing in both `src` and `dst` but with different `md5`
  *   * `unmodified` — files with equal content in both `src` and `dst`
  *
- * @param {globFile[]} src
- * @param {globFile[]} dst
- * @returns {{added: Array, removed: Array, modified: Array, unmodified: Array}}
+ * @param {GlobFile[]} src
+ * @param {GlobFile[]} dst
+ * @returns {{added: GlobFile[], removed: GlobFile[], modified: GlobFile[], unmodified: GlobFile[]}}
  */
 exports.diff = function(src, dst) {
   var added = []
@@ -103,10 +112,11 @@ exports.diff = function(src, dst) {
  * Search an array by applying predicate function to each element.
  * If found, the element is removed from original array.
  *
- * @param {Array} arr array to search in
- * @param {function(elem, index, array)} fn predicate function
- * @param thisArg optional value for `this` in predicate function
+ * @param {Array} arr - array to search in
+ * @param {function(elem, index, array)} fn - predicate function
+ * @param {*} thisArg - optional value for `this` in predicate function
  * @returns {*} element found or `null`
+ * @api private
  */
 function findAndRemove(arr, fn, thisArg) {
   for (var i = 0; i < arr.length; i++) {
@@ -115,3 +125,22 @@ function findAndRemove(arr, fn, thisArg) {
       return arr.splice(i, 1)[0];
   }
 }
+
+/**
+ * File descriptor object.
+ *
+ * Example:
+ *
+ * ```
+ * {
+ *   path: 'path/to/file/relative/to/cwd`,
+ *   mtime: 1234567890,
+ *   md5: 'd41d8cd98f00b204e9800998ecf8427e'
+ * }
+ * ```
+ *
+ * @typedef {object} GlobFile
+ * @property {string} path -- path relative to `cwd`
+ * @property {number} mtime -- last modification timestamp
+ * @property {string} md5 -- md5 hash of file content
+ */
