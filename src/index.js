@@ -7,7 +7,7 @@ var glob = require('glob')
   , crypto = require('crypto');
 
 /**
- * Glob utils are used to read and compare file trees.
+ * Glob utils used to read and compare file trees.
  *
  * Usage:
  *
@@ -17,9 +17,15 @@ var glob = require('glob')
  * glob('base/directory', 'glob/pattern/*', function(err, files) {
  *   // ...
  * });
+ *
+ * var diff = glob.diff(oldFiles, newFiles);
+ * // diff.added
+ * // diff.removed
+ * // diff.modified
+ * // diff.unmodified
  * ```
  *
- * @module
+ * @module prostore.glob-utils
  * @see {GlobFile}
  */
 

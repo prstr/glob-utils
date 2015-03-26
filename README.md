@@ -1,6 +1,6 @@
-<a name="module_index"></a>
-#index
-Glob utils are used to read and compare file trees.
+<a name="prostore.module_glob-utils"></a>
+#prostore.glob-utils
+Glob utils used to read and compare file trees.
 
 Usage:
 
@@ -10,19 +10,24 @@ var glob = require('prostore.glob-utils');
 glob('base/directory', 'glob/pattern/*', function(err, files) {
   // ...
 });
+
+var diff = glob.diff(oldFiles, newFiles);
+// diff.added
+// diff.removed
+// diff.modified
+// diff.unmodified
 ```
 
 **Members**
 
-* [index](#module_index)
-  * [module.exports ⏏](#exp_module_index)
-    * [index.diff(src, dst)](#module_index.diff)
-    * [index~findAndRemove(arr, fn, thisArg)](#module_index..findAndRemove)
-    * [callback: index~lookupCb](#module_index..lookupCb)
-    * [type: index~GlobFile](#module_index..GlobFile)
+* [prostore.glob-utils](#prostore.module_glob-utils)
+  * [glob-utils.diff(src, dst)](#prostore.module_glob-utils.diff)
+  * [glob-utils~findAndRemove(arr, fn, thisArg)](#prostore.module_glob-utils..findAndRemove)
+  * [callback: glob-utils~lookupCb](#prostore.module_glob-utils..lookupCb)
+  * [type: glob-utils~GlobFile](#prostore.module_glob-utils..GlobFile)
 
-<a name="module_index.diff"></a>
-##index.diff(src, dst)
+<a name="prostore.module_glob-utils.diff"></a>
+##glob-utils.diff(src, dst)
 Compares two lists of file descriptors yielding four arrays:
 
   * `added` — files existing in `src` but missing in `dst`;
@@ -36,8 +41,8 @@ Compares two lists of file descriptors yielding four arrays:
 - dst `Array.<GlobFile>`  
 
 **Returns**: `Object`  
-<a name="module_index..findAndRemove"></a>
-##index~findAndRemove(arr, fn, thisArg)
+<a name="prostore.module_glob-utils..findAndRemove"></a>
+##glob-utils~findAndRemove(arr, fn, thisArg)
 Search an array by applying predicate function to each element.
 If found, the element is removed from original array.
 
@@ -47,19 +52,19 @@ If found, the element is removed from original array.
 - fn `function` - predicate function  
 - thisArg `*` - optional value for `this` in predicate function  
 
-**Scope**: inner function of [index](#module_index)  
+**Scope**: inner function of [glob-utils](#prostore.module_glob-utils)  
 **Returns**: `*` - element found or `null`  
-<a name="module_index..lookupCb"></a>
-##callback: index~lookupCb
+<a name="prostore.module_glob-utils..lookupCb"></a>
+##callback: glob-utils~lookupCb
 **Params**
 
 - err `*` - error object  
 - files `Array.<GlobFile>` - array of file descriptors  
 
-**Scope**: inner typedef of [index](#module_index)  
+**Scope**: inner typedef of [glob-utils](#prostore.module_glob-utils)  
 **Type**: `function`  
-<a name="module_index..GlobFile"></a>
-##type: index~GlobFile
+<a name="prostore.module_glob-utils..GlobFile"></a>
+##type: glob-utils~GlobFile
 File descriptor object.
 
 Example:
@@ -78,5 +83,5 @@ Example:
 - mtime `number` - - last modification timestamp  
 - md5 `string` - - md5 hash of file content  
 
-**Scope**: inner typedef of [index](#module_index)  
+**Scope**: inner typedef of [glob-utils](#prostore.module_glob-utils)  
 **Type**: `object`  
