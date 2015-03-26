@@ -6,6 +6,32 @@ var glob = require('glob')
   , path = require('path')
   , crypto = require('crypto');
 
+/**
+ * Each file descriptor looks like this:
+ *
+ * ```
+ * {
+ *   path: 'path/to/file/relative/to/cwd`,
+ *   mtime: 1234567890,
+ *   md5: 'd41d8cd98f00b204e9800998ecf8427e'
+ * }
+ * ```
+ *
+ * @typedef {{ path: string, mtime: number, md5: string }} globFile
+ */
+
+/**
+ * Expands glob `pattern` into an array of file descriptors.
+ *
+ * Dot-files (i.e. starting with dot) are not returned as per `glob` module.
+ *
+ * @param cwd {string} (current work directory) a directory where lookup is
+ *   performed; this path is also stripped from resulting file paths.
+ * @param pattern {string} glob pattern
+ * @param cb {function(err, globFile[])} callback
+ * @see {@link https://github.com/isaacs/node-glob glob}
+ * @module
+ */
 module.exports = exports = function(cwd, pattern, cb) {
   glob(pattern, { cwd: cwd, nodir: true }, function(err, files) {
     /* istanbul ignore if */
@@ -35,6 +61,18 @@ module.exports = exports = function(cwd, pattern, cb) {
   });
 };
 
+/**
+ * Compares two lists of file descriptors yielding four arrays:
+ *
+ *   * `added` — files existing in `src` but missing in `dst`;
+ *   * `removed` — files existing in `dst` but missing in `src`;
+ *   * `modified` — files existing in both `src` and `dst` but with different `md5`
+ *   * `unmodified` — files with equal content in both `src` and `dst`
+ *
+ * @param {globFile[]} src
+ * @param {globFile[]} dst
+ * @returns {{added: Array, removed: Array, modified: Array, unmodified: Array}}
+ */
 exports.diff = function(src, dst) {
   var added = []
     , modified = []
@@ -61,6 +99,15 @@ exports.diff = function(src, dst) {
   };
 };
 
+/**
+ * Search an array by applying predicate function to each element.
+ * If found, the element is removed from original array.
+ *
+ * @param {Array} arr array to search in
+ * @param {function(elem, index, array)} fn predicate function
+ * @param thisArg optional value for `this` in predicate function
+ * @returns {*} element found or `null`
+ */
 function findAndRemove(arr, fn, thisArg) {
   for (var i = 0; i < arr.length; i++) {
     var elem = arr[i];
