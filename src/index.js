@@ -69,7 +69,7 @@ module.exports = exports = function(cwd, pattern, cb) {
  *
  * Usage:
  *
- * ```
+ * ```js
  * var diff = glob.diff(oldFiles, newFiles);
  * // diff.added
  * // diff.removed
