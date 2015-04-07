@@ -4,7 +4,8 @@ var glob = require('glob')
   , async = require('async')
   , fs = require('fs')
   , path = require('path')
-  , crypto = require('crypto');
+  , crypto = require('crypto')
+  , gitignoreParser = require('gitignore-parser');
 
 /**
  * Lookup files in `cwd` directory matching glob `pattern`.
@@ -21,9 +22,23 @@ var glob = require('glob')
  * @module prostore.glob-utils
  */
 module.exports = exports = function(cwd, pattern, cb) {
-  glob(pattern, { cwd: cwd, nodir: true }, function(err, files) {
+  async.parallel([
+    function(cb) {
+      glob(pattern, { cwd: cwd, nodir: true }, cb);
+    },
+    function(cb) {
+      fs.readFile(path.join(cwd, '.gitignore'), 'utf-8', function(err, text) {
+        // Error is swallowed intentionally
+        cb(null, text || '');
+      });
+    }
+  ], function(err, res) {
     /* istanbul ignore if */
     if (err) return cb(err);
+    var gitignore = gitignoreParser.compile(res[1] || '')
+      , files = res[0].filter(function(file) {
+        return gitignore.accepts(file);
+      });
     async.map(files, function(file, cb) {
       var filename = path.resolve(cwd, file);
       fs.stat(filename, function(err, stat) {
