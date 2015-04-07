@@ -123,12 +123,14 @@ exports.copy = function(cwd, files, target, cb) {
  * Internal function of {@link copy}, accepts GlobFiles[].
  */
 function _copy(cwd, files, target, cb) {
-  fs.mkdirp(target, function(err) {
-    if (err) return cb(err);
-    async.each(files, function(file, cb) {
-      fs.copy(path.join(cwd, file), target, cb);
-    }, cb);
-  });
+  async.each(files, function(file, cb) {
+    var srcFile = path.join(cwd, file.path)
+      , dstFile = path.join(target, file.path);
+    fs.mkdirp(path.dirname(dstFile), function(err) {
+      if (err) return cb(err);
+      fs.copy(srcFile, dstFile, cb);
+    });
+  }, cb);
 }
 
 /**
