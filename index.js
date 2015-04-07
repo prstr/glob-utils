@@ -2,7 +2,7 @@
 
 var glob = require('glob')
   , async = require('async')
-  , fs = require('fs')
+  , fs = require('fs-extra')
   , path = require('path')
   , crypto = require('crypto')
   , gitignoreParser = require('gitignore-parser');
@@ -100,6 +100,36 @@ exports.diff = function(src, dst) {
     unmodified: unmodified
   };
 };
+
+/**
+ * Copies files (either by array of {@link GlobFile} or by pattern)
+ * to specified `target` directory, mkdirping it if it doesn't exist yet.
+ *
+ * @param {string} cwd - current work directory
+ * @param {GlobFile[]} files - string pattern or an array of GlobFile
+ * @param {string} target - directory to copy into
+ * @param cb {function} - callback `function(err, files)`,
+ */
+exports.copy = function(cwd, files, target, cb) {
+  if (typeof files == 'string') {
+    exports(cwd, files, function(err, files) {
+      if (err) return cb(err);
+      _copy(cwd, files, target, cb);
+    });
+  } else _copy(cwd, files, target, cb);
+};
+
+/**
+ * Internal function of {@link copy}, accepts GlobFiles[].
+ */
+function _copy(cwd, files, target, cb) {
+  fs.mkdirp(target, function(err) {
+    if (err) return cb(err);
+    async.each(files, function(file, cb) {
+      fs.copy(path.join(cwd, file), target, cb);
+    }, cb);
+  });
+}
 
 /**
  * Search an array by applying predicate function to each element.

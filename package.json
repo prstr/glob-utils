@@ -6,7 +6,8 @@
   "dependencies": {
     "glob": "*",
     "async": "*",
-    "gitignore-parser": "*"
+    "gitignore-parser": "*",
+    "fs-extra": "*"
   },
   "devDependencies": {
     "gulp": "*",
