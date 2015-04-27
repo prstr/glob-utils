@@ -67,37 +67,51 @@ module.exports = exports = function(cwd, pattern, cb) {
 /**
  * Compares two lists of file descriptors yielding four arrays:
  *
- *   * `added` — files existing in `src` but missing in `dst`
- *   * `removed` — files existing in `dst` but missing in `src`
- *   * `modified` — files existing in both `src` and `dst` but with different `md5`
- *   * `unmodified` — files with equal content in both `src` and `dst`
+ *   * `added` — files existing in `local` but missing in `remote`
+ *   * `removed` — files existing in `local` but missing in `remote`
+ *   * `modified` — files existing in both `local` and `remote` but with different `md5`
+ *   * `unmodified` — files with equal content in both `local` and `remote`
+ *   * `updated` — modified files with mtime on `remote` greater than on `local`
+ *   * `dirty` — modified files with mtime on `local` greater than on `remote`
  *
- * @param {GlobFile[]} src
- * @param {GlobFile[]} dst
+ * This method is O(N * M) in worst case with N, M being the sizes of
+ * local and remote arrays respectively.
+ *
+ * @param {GlobFile[]} local
+ * @param {GlobFile[]} remote
  */
-exports.diff = function(src, dst) {
+exports.diff = function(local, remote) {
   var added = []
     , modified = []
     , unmodified = []
-    , _dst = dst.slice();
-  src.forEach(function(srcFile) {
-    var dstFile = findAndRemove(_dst, function(dstFile) {
-      return dstFile.path == srcFile.path;
+    , dirty = []
+    , updated = []
+    , _remote = remote.slice();
+  local.forEach(function(l) {
+    var r = findAndRemove(_remote, function(r) {
+      return r.path == l.path;
     });
-    if (!dstFile) {
-      added.push(srcFile);
+    if (!r) {
+      added.push(l);
       return;
     }
-    if (srcFile.md5 && srcFile.md5 == dstFile.md5)
-      unmodified.push(dstFile);
-    else
-      modified.push(dstFile);
+    if (l.md5 && l.md5 == r.md5)
+      unmodified.push(r);
+    else {
+      modified.push(r);
+      if (l.mtime >= r.mtime)
+        dirty.push(r);
+      else
+        updated.push(r);
+    }
   });
   return {
     added: added,
-    removed: _dst,
+    removed: _remote,
     modified: modified,
-    unmodified: unmodified
+    unmodified: unmodified,
+    updated: updated,
+    dirty: dirty
   };
 };
 
