@@ -111,7 +111,15 @@ exports.diff = function(local, remote) {
     modified: modified,
     unmodified: unmodified,
     updated: updated,
-    dirty: dirty
+    dirty: dirty,
+    local: {
+      newer: added.concat(dirty),
+      missing: _remote
+    },
+    remote: {
+      newer: _remote.concat(updated),
+      missing: added
+    }
   };
 };
 
