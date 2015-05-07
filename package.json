@@ -11,8 +11,14 @@
   },
   "devDependencies": {
     "gulp": "*",
-    "jsdoc-to-markdown": "*"
+    "jsdoc-to-markdown": "*",
+    "eslint": "*",
+    "pre-commit": "*"
   },
+  "scripts": {
+    "pretest": "eslint ."
+  },
+  "pre-commit": [ "pretest" ],
   "repository": {
     "type": "git",
     "url": "git@github.com:prstr/glob-utils.git"

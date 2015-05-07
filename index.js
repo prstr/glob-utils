@@ -21,38 +21,38 @@ var glob = require('glob')
  * @see {@link https://github.com/isaacs/node-glob glob}
  * @module prostore.glob-utils
  */
-module.exports = exports = function(cwd, pattern, cb) {
+module.exports = exports = function (cwd, pattern, cb) {
   async.parallel([
-    function(cb) {
+    function (cb) {
       glob(pattern, { cwd: cwd, nodir: true }, cb);
     },
-    function(cb) {
-      fs.readFile(path.join(cwd, '.gitignore'), 'utf-8', function(err, text) {
-        // Error is swallowed intentionally
-        cb(null, text || '');
-      });
+    function (cb) {
+      fs.readFile(path.join(cwd, '.gitignore'), 'utf-8',
+        function (ignoredErr, text) {
+          cb(null, text || '');
+        });
     }
-  ], function(err, res) {
+  ], function (err, res) {
     /* istanbul ignore if */
     if (err) return cb(err);
     var gitignore = gitignoreParser.compile(res[1] || '')
-      , files = res[0].filter(function(file) {
+      , files = res[0].filter(function (file) {
         return gitignore.accepts(file);
       });
-    async.map(files, function(file, cb) {
+    async.map(files, function (file, cb) {
       var filename = path.resolve(cwd, file);
-      fs.stat(filename, function(err, stat) {
+      fs.stat(filename, function (err, stat) {
         /* istanbul ignore if */
         if (err) return cb(err);
         var hash = crypto.createHash('md5')
           , stream = fs.createReadStream(filename, 'utf-8');
-        stream.on('data', function(data) {
+        stream.on('data', function (data) {
           hash.update(data);
         });
-        stream.on('error', function(err) {
+        stream.on('error', function (err) {
           cb(err);
         });
-        stream.on('end', function() {
+        stream.on('end', function () {
           cb(null, {
             path: file,
             md5: hash.digest('hex'),
@@ -80,15 +80,15 @@ module.exports = exports = function(cwd, pattern, cb) {
  * @param {GlobFile[]} local
  * @param {GlobFile[]} remote
  */
-exports.diff = function(local, remote) {
+exports.diff = function (local, remote) {
   var added = []
     , modified = []
     , unmodified = []
     , dirty = []
     , updated = []
     , _remote = remote.slice();
-  local.forEach(function(l) {
-    var r = findAndRemove(_remote, function(r) {
+  local.forEach(function (l) {
+    var r = findAndRemove(_remote, function (r) {
       return r.path == l.path;
     });
     if (!r) {
@@ -132,9 +132,9 @@ exports.diff = function(local, remote) {
  * @param {string} target - directory to copy into
  * @param cb {function} - callback `function(err, files)`,
  */
-exports.copy = function(cwd, files, target, cb) {
+exports.copy = function (cwd, files, target, cb) {
   if (typeof files == 'string') {
-    exports(cwd, files, function(err, files) {
+    exports(cwd, files, function (err, files) {
       if (err) return cb(err);
       _copy(cwd, files, target, cb);
     });
@@ -145,10 +145,10 @@ exports.copy = function(cwd, files, target, cb) {
  * Internal function of {@link copy}, accepts GlobFiles[].
  */
 function _copy(cwd, files, target, cb) {
-  async.each(files, function(file, cb) {
+  async.each(files, function (file, cb) {
     var srcFile = path.join(cwd, file.path)
       , dstFile = path.join(target, file.path);
-    fs.mkdirp(path.dirname(dstFile), function(err) {
+    fs.mkdirp(path.dirname(dstFile), function (err) {
       if (err) return cb(err);
       fs.copy(srcFile, dstFile, cb);
     });
