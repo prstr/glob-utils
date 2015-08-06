@@ -45,7 +45,7 @@ module.exports = exports = function (cwd, pattern, cb) {
         /* istanbul ignore if */
         if (err) return cb(err);
         var hash = crypto.createHash('md5')
-          , stream = fs.createReadStream(filename, 'utf-8');
+          , stream = fs.createReadStream(filename);
         stream.on('data', function (data) {
           hash.update(data);
         });
